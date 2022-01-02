@@ -1,6 +1,9 @@
 package com.nh.netty.server;
 
+import com.nh.netty.constant.Constants;
 import com.nh.netty.handler.ServerHandler;
+import com.nh.netty.zookeeper.ServerWatcher;
+import com.nh.netty.zookeeper.ZookeeperFactory;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -13,13 +16,23 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.api.ExistsBuilder;
+import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.data.Stat;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
+
+import java.net.InetAddress;
 
 @Configuration
 public class NettyServer {
+    public static final String SERVER_PATH = "/netty";
 
-    public  void start() {
+    public static void main(String[] args)throws  Exception {
+        start();
+    }
+    public static void start() {
         // 1.新建两个线程组，boss线程组启动一条线成，监听OP_ACCEPT事件
         // worker线程组默认启动CPU核数*2的线程(IO密集型)监听客户端连接的OP_READ和OP_WRITE事件，处理IO事件
 
@@ -55,6 +68,21 @@ public class NettyServer {
                     });
             // 同步绑定端口
             ChannelFuture future = serverBootstrap.bind(9999).sync();
+
+            // 链接zk
+            CuratorFramework client = ZookeeperFactory.create();
+            InetAddress inetAddress = InetAddress.getLocalHost();
+            Stat stat = client.checkExists().forPath(SERVER_PATH);
+            if(stat == null){
+                client.create().creatingParentsIfNeeded().withMode(CreateMode.PERSISTENT).forPath(SERVER_PATH,"0".getBytes());
+            }
+            // 在SERVER_PATH目录下构建临时节点，127.0.0.1#8080#1#
+            client.create().withMode(CreateMode.EPHEMERAL_SEQUENTIAL).forPath(SERVER_PATH+"/"+inetAddress.getHostAddress()
+            +"#"+Constants.port+"#"+Constants.weight+"#");
+            // 加上zk监控，以防Session终端导致临时节点丢失
+            ServerWatcher.serverKey=inetAddress.getHostAddress()+Constants.port+ Constants.weight;
+            client.getChildren().usingWatcher(ServerWatcher.getInstance()).forPath(SERVER_PATH);
+
             // 阻塞主线程，直到socket通道被关闭
             future.channel().closeFuture().sync();
         }catch (Exception e){

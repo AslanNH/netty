@@ -19,12 +19,10 @@ import java.nio.charset.Charset;
 
 public class NettyClient {
 
-    public static EventLoopGroup group = null;
-    public static Bootstrap bootstrap = null;
-    public static ChannelFuture future = null;
+    public static EventLoopGroup group = new NioEventLoopGroup();
 
-    static {
-        bootstrap = new Bootstrap();
+    public static Bootstrap getBootstrap() {
+        Bootstrap bootstrap = new Bootstrap();
         group = new NioEventLoopGroup();
         bootstrap.channel(NioSocketChannel.class);
         bootstrap.group(group);
@@ -47,19 +45,16 @@ public class NettyClient {
 
             }
         });
-        try{
-            future = bootstrap.connect("127.0.0.1",9999).sync();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        return bootstrap;
     }
 
-    public Object sendRequest(Object msg,String path){
+    public Object sendRequest(Object msg,String path)throws Exception{
         try{
             RequestFuture request = new RequestFuture();
             request.setRequest(msg);
             request.setPath(path);
             String requestStr = JSONObject.toJSONString(request);
+            ChannelFuture future = ChannelFutureManager.get();
             future.channel().writeAndFlush(requestStr);
             Object result = request.get();
             return result;
@@ -71,7 +66,7 @@ public class NettyClient {
     public static void main(String[] args) throws Exception{
        NettyClient client = new NettyClient();
        for(int i=0;i<100;i++){
-           Object result = client.sendRequest("hello","getUserNameById");
+           Object result = client.sendRequest("id"+i,"getUserNameById");
            System.out.println(result);
        }
 
