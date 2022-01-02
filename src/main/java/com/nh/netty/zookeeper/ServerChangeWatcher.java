@@ -83,7 +83,7 @@ public class ServerChangeWatcher implements CuratorWatcher {
     }
     public static void initChannelFuture()throws Exception{
         CuratorFramework client = ZookeeperFactory.create();
-        List<String>servers = client.getChildren().forPath(Constants.SERVER_PATH);
+        List<String>servers = client.getChildren().forPath("/netty");
         System.out.println("========初始化服务器链接========");
         for(String server: servers){
             String [] str = server.split("#");
