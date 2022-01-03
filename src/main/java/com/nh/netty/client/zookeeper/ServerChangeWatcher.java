@@ -1,9 +1,10 @@
-package com.nh.netty.zookeeper;
+package com.nh.netty.client.zookeeper;
 
 import com.nh.netty.client.ChannelFutureManager;
 import com.nh.netty.client.NettyClient;
 import com.nh.netty.constant.Constants;
 import com.nh.netty.server.NettyServer;
+import com.nh.netty.zookeeper.ZookeeperFactory;
 import io.netty.channel.ChannelFuture;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.api.CuratorWatcher;

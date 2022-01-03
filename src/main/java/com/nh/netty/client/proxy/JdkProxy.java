@@ -18,17 +18,29 @@ public class JdkProxy implements InvocationHandler, BeanPostProcessor {
 
     private Field target;
 
+    /**
+     * 调用的时候执行的代理操作
+     * @param proxy
+     * @param method
+     * @param args
+     * @return
+     * @throws Throwable
+     */
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         RequestFuture requestFuture = new RequestFuture();
+        // UserService.getUserByName(String userName)
         requestFuture.setPath(target.getType().getName()+"."+method.getName());
+        // 设置参数——userName
         requestFuture.setRequest(args[0]);
+        // 使用netty发送请求
         Object resp = NettyClient.sendRequest(requestFuture);
-
+        // 获取返回类型
         Class returnType = method.getReturnType();
         if(resp == null){
             return null;
         }
+        // 类型转换
         resp = JSONObject.parseObject(JSONObject.toJSONString(resp),returnType);
         return resp;
     }
@@ -38,6 +50,14 @@ public class JdkProxy implements InvocationHandler, BeanPostProcessor {
         return Proxy.newProxyInstance(field.getType().getClassLoader(),new Class[]{field.getType()},this);
     }
 
+    /**
+     * 初始化bean之前，对其有RemoteInvoker注解的属性类设置代理，
+     * 这里就是对loginController的UserService类设置代理
+     * @param bean
+     * @param beanName
+     * @return
+     * @throws BeansException
+     */
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
        Field[] fields = bean.getClass().getDeclaredFields();

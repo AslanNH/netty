@@ -1,6 +1,6 @@
 package com.nh.netty.client;
 
-import com.nh.netty.zookeeper.ServerChangeWatcher;
+import com.nh.netty.client.zookeeper.ServerChangeWatcher;
 import io.netty.channel.ChannelFuture;
 
 import java.util.List;
