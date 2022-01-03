@@ -1,4 +1,4 @@
-package com.nh.netty.controller;
+package com.nh.netty.server.controller;
 
 import com.nh.netty.annotation.Remote;
 import org.springframework.stereotype.Controller;

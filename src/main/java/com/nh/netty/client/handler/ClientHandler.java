@@ -1,4 +1,4 @@
-package com.nh.netty.handler;
+package com.nh.netty.client.handler;
 
 import com.alibaba.fastjson.JSONObject;
 import com.nh.netty.component.RequestFuture;

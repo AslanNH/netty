@@ -1,9 +1,9 @@
-package com.nh.netty.handler;
+package com.nh.netty.server.hanlder;
 
 import com.alibaba.fastjson.JSONObject;
 import com.nh.netty.component.RequestFuture;
 import com.nh.netty.component.Response;
-import com.nh.netty.component.Mediator;
+import com.nh.netty.server.Mediator;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;

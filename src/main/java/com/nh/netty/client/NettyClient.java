@@ -1,8 +1,9 @@
 package com.nh.netty.client;
 
 import com.alibaba.fastjson.JSONObject;
+import com.nh.netty.client.controller.LoginController;
 import com.nh.netty.component.RequestFuture;
-import com.nh.netty.handler.ClientHandler;
+import com.nh.netty.client.handler.ClientHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelFuture;
@@ -15,6 +16,8 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
 import java.nio.charset.Charset;
 
 public class NettyClient {
@@ -64,11 +67,26 @@ public class NettyClient {
         }
     }
     public static void main(String[] args) throws Exception{
-       NettyClient client = new NettyClient();
-       for(int i=0;i<100;i++){
-           Object result = client.sendRequest("id"+i,"getUserNameById");
-           System.out.println(result);
-       }
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(
+                new String[]{"com.nh.netty.client.**","com.nh.netty.annotation"
+                        ,"com.nh.netty.component","com.nh.netty.constant","com.nh.netty.zookeeper"});
+        LoginController loginContrller = context.getBean(LoginController.class);
+        Object result = loginContrller.getUserByName("张三");
+        System.out.println(result);
 
+    }
+
+    public static Object sendRequest(RequestFuture request)throws Exception{
+        try{
+            String requestStr = JSONObject.toJSONString(request);
+            ChannelFuture future = ChannelFutureManager.get();
+            future.channel().writeAndFlush(requestStr);
+
+            Object result = request.get();
+            return result;
+        }catch ( Exception e){
+            e.printStackTrace();;
+            throw e;
+        }
     }
 }

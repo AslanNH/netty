@@ -1,7 +1,7 @@
 package com.nh.netty.server;
 
 import com.nh.netty.constant.Constants;
-import com.nh.netty.handler.ServerHandler;
+import com.nh.netty.server.hanlder.ServerHandler;
 import com.nh.netty.zookeeper.ServerWatcher;
 import com.nh.netty.zookeeper.ZookeeperFactory;
 import io.netty.bootstrap.ServerBootstrap;
@@ -17,10 +17,8 @@ import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.api.ExistsBuilder;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import java.net.InetAddress;
