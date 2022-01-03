@@ -70,8 +70,8 @@ public class NettyClient {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(
                 new String[]{"com.nh.netty.client.**","com.nh.netty.annotation"
                         ,"com.nh.netty.component","com.nh.netty.constant","com.nh.netty.zookeeper"});
-        LoginController loginContrller = context.getBean(LoginController.class);
-        Object result = loginContrller.getUserByName("张三");
+        LoginController loginController = context.getBean(LoginController.class);
+        Object result = loginController.getUserByName("张三");
         System.out.println(result);
 
     }
