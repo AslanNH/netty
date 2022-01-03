@@ -2,7 +2,7 @@ package com.nh.netty.server;
 
 import com.nh.netty.constant.Constants;
 import com.nh.netty.server.hanlder.ServerHandler;
-import com.nh.netty.zookeeper.ServerWatcher;
+import com.nh.netty.server.watcher.ServerWatcher;
 import com.nh.netty.zookeeper.ZookeeperFactory;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;

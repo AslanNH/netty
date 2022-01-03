@@ -1,7 +1,8 @@
-package com.nh.netty.zookeeper;
+package com.nh.netty.server.watcher;
 
 import com.nh.netty.constant.Constants;
 import com.nh.netty.server.NettyServer;
+import com.nh.netty.zookeeper.ZookeeperFactory;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.api.CuratorWatcher;
 import org.apache.zookeeper.CreateMode;
