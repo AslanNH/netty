@@ -15,9 +15,6 @@ import java.lang.reflect.Proxy;
 
 @Component
 public class JdkProxy implements InvocationHandler, BeanPostProcessor {
-
-    private Field target;
-
     /**
      * 调用的时候执行的代理操作
      * @param proxy
@@ -30,7 +27,7 @@ public class JdkProxy implements InvocationHandler, BeanPostProcessor {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         RequestFuture requestFuture = new RequestFuture();
         // UserService.getUserByName(String userName)
-        requestFuture.setPath(target.getType().getName()+"."+method.getName());
+        requestFuture.setPath(method.getDeclaringClass().getName()+"."+method.getName());
         // 设置参数——userName
         requestFuture.setRequest(args[0]);
         // 使用netty发送请求
@@ -46,7 +43,6 @@ public class JdkProxy implements InvocationHandler, BeanPostProcessor {
     }
 
     private Object getJdkProxy(Field field){
-        this.target = field;
         return Proxy.newProxyInstance(field.getType().getClassLoader(),new Class[]{field.getType()},this);
     }
 
