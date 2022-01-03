@@ -1,4 +1,4 @@
-package com.nh.netty.client.zookeeper;
+package com.nh.netty.client.watcher;
 
 import com.nh.netty.client.ChannelFutureManager;
 import com.nh.netty.client.NettyClient;
